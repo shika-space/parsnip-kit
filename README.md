@@ -1,4 +1,4 @@
-# <center> Parsnip-Kit
+# <center> Parsnip-Kit </center>
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-v5.7.2-blue)](https://www.typescriptlang.org/) [![Vite](https://img.shields.io/badge/Vite-v6.1.0-7D85FF)](https://vite.dev/) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
 
