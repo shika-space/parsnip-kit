@@ -1,1 +1,2 @@
+echo "Lint-staged is running..."
 npm run lint:lint-staged
