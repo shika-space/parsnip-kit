@@ -1,6 +1,6 @@
 # clone
 [[[desc clone
-输入一个参数`arg`，返回它的浅克隆。
+输入一个参数 `arg`，返回它的浅克隆。
 
 支持基本类型、普通对象（`arg => Object.prototype.toString.apply(arg).slice(8, -1)`返回`"Object"`），以及包括这些在内的内置对象：`Array`、`Map`、`Set`、`Date`、`RegExp`。
 
@@ -8,12 +8,16 @@
 
 对于普通对象，会尝试以它的原型构造新的对象作为浅克隆，如果没有原型则创建空对象。然后加上入参`arg`的可枚举属性。
 
+对于 `Arguments` 对象，将返回一个 `Array` 作为它的克隆 （v0.0.3）。
+
+对于 `RegExp` 对象，不会复制其 `lastIndex` 字段。
+
 支持复制的内置对象：
 
 |分类|支持的对象|
 |-|-|
 |包装类|`String` `Number` `Boolean`|
-|集合类型|`Object` `Array` `Map` `Set`|
+|集合类型|`Object` `Array` `Map` `Set` `Arguments`(v0.0.3)|
 |时间日期|`Date`|
 |正则表达式|`RegExp`|
 |文件和流|`Blob` `File` `ArrayBuffer`|

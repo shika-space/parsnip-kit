@@ -1,4 +1,4 @@
-import { ObjectLike } from '../common/types'
+import { ObjectLike, PseudoArray } from '../common/types'
 import { getTypeTag } from '../typed/getTypeTag'
 import { isFunction } from '../typed/isFunction'
 import { isObject } from '../typed/isObject'
@@ -52,6 +52,7 @@ function cloneDeepHelper(
 ) {
   if (isObject(arg)) {
     let ans: any = {}
+    const argTypeTag = getTypeTag(arg)
     if (arg instanceof Map) {
       ans = new Map()
       for (const entry of arg.entries()) {
@@ -65,14 +66,13 @@ function cloneDeepHelper(
       for (const value of arg.values()) {
         ans.add(cloneWithCache(value, cache, undefined, customizeClone))
       }
-    } else if (Array.isArray(arg)) {
-      ans = new Array(arg.length)
+    } else if (Array.isArray(arg) || argTypeTag === 'Arguments') {
+      ans = new Array((arg as PseudoArray).length)
       const argKeys = Object.keys(arg)
       for (const key of argKeys) {
         ans[key] = cloneWithCache(arg[key], cache, key, customizeClone)
       }
     } else {
-      const argTypeTag = getTypeTag(arg)
       ans = cloneNotCollectionObject(arg, argTypeTag, cache)
       if (!ans) {
         if (isFunction(customizeClone)) {

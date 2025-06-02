@@ -11,12 +11,16 @@ import { isObjectLike } from '../typed/isObjectLike'
  *
  * For plain objects, it will attempt to construct a new object based on its prototype as a shallow clone. If there is no prototype, an empty object will be created. Then, the enumerable properties of the input argument `arg` will be added.
  *
+ * For `Arguments` objects, the function will returns a `Array` as its clone (v0.0.3).
+ *
+ * For `RegExp` objects, the function will not clone the `lastIndex` field.
+ *
  * Supported built-in objects for cloning:
  *
  * |Category|Supported Objects|
  * |-|-|
  * |Wrapper Classes|`String` `Number` `Boolean`|
- * |Collection Types|`Object` `Array` `Map` `Set`|
+ * |Collection Types|`Object` `Array` `Map` `Set` `Arguments`(v0.0.3)|
  * |Date and Time|`Date`|
  * |Regular Expressions|`RegExp`|
  * |Files and Streams|`Blob` `File` `ArrayBuffer`|
@@ -31,6 +35,7 @@ import { isObjectLike } from '../typed/isObjectLike'
 export function clone<T extends PrimitiveType | ObjectLike>(arg: T) {
   if (isObjectLike(arg)) {
     let ans: any = {}
+    const argTypeTag = getTypeTag(arg)
     if (arg instanceof Map) {
       ans = new Map()
       for (const entry of arg.entries()) {
@@ -41,14 +46,13 @@ export function clone<T extends PrimitiveType | ObjectLike>(arg: T) {
       for (const value of arg.values()) {
         ans.add(value)
       }
-    } else if (Array.isArray(arg)) {
+    } else if (Array.isArray(arg) || argTypeTag === 'Arguments') {
       ans = new Array(arg.length)
       const argKeys = Object.keys(arg)
       for (const key of argKeys) {
         ans[key] = arg[key]
       }
     } else {
-      const argTypeTag = getTypeTag(arg)
       ans = cloneNotCollectionObject(arg, argTypeTag)
       if (!ans) {
         if (argTypeTag === 'Object') {
@@ -101,7 +105,7 @@ export const cloneNotCollectionObject = (
       ans = new Date(arg.valueOf() as number)
       break
     case 'RegExp':
-      ans = new RegExp(arg.toString())
+      ans = new RegExp(arg.source, arg.flags)
       break
     case 'Blob':
       ans = new Blob([arg as Blob], { type: arg.type })

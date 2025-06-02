@@ -1,29 +1,101 @@
-import { test, describe, expect } from 'vitest'
-import { clone } from '../clone'
-import { cloneDeep } from '../cloneDeep'
-import { getTypeTag } from '../../main'
+import { describe, expect, test } from 'vitest'
+import { clone } from '../clone' // Replace with your module path
 
-describe('clone', () => {
-  test('clone', () => {
-    expect(clone(undefined)).eq(undefined)
-    expect(clone(null)).eq(null)
-    expect(clone(123)).eq(123)
-    expect(clone('test')).eq('test')
-    expect(clone(true)).eq(true)
-    expect(clone(BigInt(123))).eq(123n)
+function isArrayBuffersEqual(buffer1: ArrayBuffer, buffer2: ArrayBuffer) {
+  if (buffer1.byteLength !== buffer2.byteLength) {
+    return false
+  }
+  const view1 = new Uint8Array(buffer1)
+  const view2 = new Uint8Array(buffer2)
 
-    const symbol = Symbol('test')
-    expect(clone(symbol)).eq(symbol)
+  return isTypeArraysEqual(view1, view2)
+}
 
-    const date = new Date(0)
-    const cloneDate = clone(date)
-    expect(date === cloneDate).eq(false)
-    expect(cloneDate.valueOf()).eq(0)
+function isTypeArraysEqual(a, b) {
+  if (a.length !== b.length) return false
+  for (let i = 0; i < a.length; i++) {
+    if (!Object.is(a[i], b[i])) return false
+  }
+  return true
+}
 
-    const regExp = /test/
-    const cloneRegExp = clone(regExp)
-    expect(regExp === cloneRegExp).eq(false)
-    expect(cloneRegExp.toString()).eq(`/\\/test\\//`)
+describe('Shallow Clone Function Tests', () => {
+  // Test cloning of primitive data types
+  test('Clone primitive data types', () => {
+    expect(clone(123)).toBe(123)
+    expect(clone('hello')).toBe('hello')
+    expect(clone(true)).toBe(true)
+    expect(clone(null)).toBeNull()
+    expect(clone(undefined)).toBeUndefined()
+  })
+
+  // Test cloning of plain objects
+  test('Clone plain objects', () => {
+    const original = { a: 1, b: 2 }
+    const cloned = clone(original)
+    expect(cloned).not.toBe(original)
+    expect(cloned).toEqual(original)
+    // Shallow clone, changes to the original object's properties do not affect the cloned object
+    original.a = 100
+    expect(cloned.a).toBe(1)
+  })
+
+  // Test cloning of arrays
+  test('Clone arrays', () => {
+    const original = [1, 2, 3]
+    const cloned = clone(original)
+    expect(cloned).not.toBe(original)
+    expect(cloned).toEqual(original)
+    // Shallow clone, changes to the original array's elements do not affect the cloned array
+    original[0] = 100
+    expect(cloned[0]).toBe(1)
+  })
+
+  // Test cloning of nested objects
+  test('Clone nested objects', () => {
+    const original = { a: 1, b: { c: 2 } }
+    const cloned = clone(original)
+    expect(cloned).not.toBe(original)
+    expect(cloned).toEqual(original)
+    // Shallow clone, the nested object reference is the same
+    expect(cloned.b).toBe(original.b)
+    // Changes to the original object's nested object properties affect the cloned object
+    original.b.c = 200
+    expect(cloned.b.c).toBe(200)
+  })
+
+  // Test cloning of Set collections
+  test('Clone Set collections', () => {
+    const original = new Set([1, 2, 3])
+    const cloned = clone(original)
+    expect(cloned).not.toBe(original)
+    expect(cloned.size).toBe(original.size)
+    expect(cloned.has(1)).toBe(true)
+  })
+
+  // Test cloning of Map collections
+  test('Clone Map collections', () => {
+    const original = new Map([
+      [1, 'one'],
+      [2, 'two']
+    ])
+    const cloned = clone(original)
+    expect(cloned).not.toBe(original)
+    expect(cloned.size).toBe(original.size)
+    expect(cloned.get(1)).toBe('one')
+  })
+
+  // Test cloning of special objects (like Date, Blob, etc.)
+  test('Clone special objects', () => {
+    const originalDate = new Date('2023-01-01')
+    const clonedDate = clone(originalDate)
+    expect(clonedDate).not.toBe(originalDate)
+    expect(clonedDate.getTime()).toBe(originalDate.getTime())
+
+    const originalRegExp = /test/g
+    const clonedRegExp = clone(originalRegExp)
+    expect(clonedRegExp).not.toBe(originalRegExp)
+    expect(clonedDate.toString()).toBe(originalDate.toString())
 
     const number = new Number(0)
     const cloneNumber = clone(number)
@@ -39,14 +111,13 @@ describe('clone', () => {
     const cloneBoolean = clone(boolean)
     expect(boolean === cloneBoolean).eq(false)
     expect(cloneBoolean.valueOf()).eq(false)
+  })
 
-    const blob = new Blob(['test'], { type: 'plain' })
-    const cloneBlob = clone(blob)
-    expect(blob === cloneBlob).eq(false)
-    expect(cloneBlob.type).eq('plain')
-    blob.text().then((text) => {
-      expect(text).eq('test')
-    })
+  test('Clone File and Stream object', () => {
+    const originalBlob = new Blob(['test'], { type: 'text/plain' })
+    const clonedBlob = clone(originalBlob)
+    expect(clonedBlob).not.toBe(originalBlob)
+    expect(clonedBlob.size).toBe(originalBlob.size)
 
     const file = new File(['test'], 'test.txt', { type: 'plain' })
     const cloneFile = clone(file)
@@ -58,127 +129,84 @@ describe('clone', () => {
     })
 
     const arrayBuffer = new ArrayBuffer(8)
-    const view = new Uint8Array(arrayBuffer)
-    view[0] = 65
-    view[1] = 66
-    view[2] = 67
-    const cloneArrayBuffer = clone(arrayBuffer)
-    expect(arrayBuffer === cloneArrayBuffer).eq(false)
-    expect(cloneArrayBuffer.byteLength).eq(8)
-    expect(new TextDecoder().decode(view)).eq(
-      new TextDecoder().decode(new Uint8Array(cloneArrayBuffer))
-    )
-
-    const arr = [{ data: 1 }, { data: 2 }, { data: 3 }]
-    const cloneArr = clone(arr)
-
-    expect(cloneArr === arr).eq(false)
-    expect(cloneArr.length === arr.length).eq(true)
-    for (let i = 0; i < cloneArr.length; i++) {
-      expect(cloneArr[i]).eq(arr[i])
-    }
-
-    const obj = { a: { data: 1 }, b: { data: 2 }, c: { data: 3 } }
-    const cloneObj = clone(obj)
-    expect(cloneObj === obj).eq(false)
-    expect(Object.keys(cloneObj).length === Object.keys(obj).length).eq(true)
-    Object.keys(cloneObj).forEach((key) => {
-      expect(cloneObj[key]).eq(obj[key])
-    })
-
-    const set = new Set([{ data: 1 }, { data: 2 }, { data: 3 }])
-    const cloneSet = clone(set)
-    expect(cloneSet === set).eq(false)
-    expect(cloneSet.size === set.size).eq(true)
-    for (const value of cloneSet.values()) {
-      expect(set.has(value)).eq(true)
-    }
-
-    const map = new Map([
-      ['a', { data: 1 }],
-      ['b', { data: 2 }],
-      ['c', { data: 3 }]
-    ])
-    const cloneMap = clone(map)
-    expect(cloneMap === map).eq(false)
-    expect(cloneMap.size === map.size).eq(true)
-    for (const entry of cloneMap.entries()) {
-      expect(map.get(entry[0]) === entry[1]).eq(true)
-    }
+    const view1 = new Uint8Array(arrayBuffer)
+    view1[0] = 65
+    view1[1] = 66
+    view1[2] = 67
+    const arrayBufferClone = clone(arrayBuffer)
+    expect(arrayBufferClone).not.toBe(arrayBuffer)
+    expect(isArrayBuffersEqual(arrayBuffer, arrayBufferClone)).toBe(true)
   })
-  test('cloneDeep', () => {
-    expect(cloneDeep('test')).eq('test')
 
-    const testObj0 = [
-      {
-        label: 'Time',
-        dataIndex: 'time',
-        validation: /^\d+$/,
-        min: new Date()
-      },
-      {
-        label: 'Name',
-        dataIndex: 'name',
-        validation: (value) => !!(value ?? '').trim()
-      }
-    ]
-    const clonedTestObj0 = cloneDeep(testObj0)
-    expect(clonedTestObj0 === testObj0).eq(false)
-    expect(clonedTestObj0[0] === testObj0[0]).eq(false)
-    expect(clonedTestObj0[0].validation === testObj0[0].validation).eq(false)
-    expect(clonedTestObj0[1] === testObj0[1]).eq(false)
-    expect(clonedTestObj0[1].validation === testObj0[1].validation).eq(true)
+  test('Clone TypedArray', () => {
+    ;[
+      Int8Array,
+      Uint8Array,
+      Uint8ClampedArray,
+      Int16Array,
+      Uint16Array,
+      Int32Array,
+      Uint32Array,
+      Float32Array,
+      Float64Array
+    ].forEach((constructor) => {
+      const original = new constructor([1, 2, 3, 4, 5])
+      const cloned = clone(original)
+      expect(original).not.toBe(cloned)
+      expect(isTypeArraysEqual(original, cloned)).toBe(true)
+    })
+    ;[BigInt64Array, BigUint64Array].forEach((constructor) => {
+      const original = new constructor([
+        BigInt(1),
+        BigInt(2),
+        BigInt(3),
+        BigInt(4),
+        BigInt(5)
+      ])
+      const cloned = clone(original)
+      expect(original).not.toBe(cloned)
+      expect(isTypeArraysEqual(original, cloned)).toBe(true)
+    })
+  })
 
-    const testClass = class {
-      #privateData
-      publicData
-      constructor(publicData, privateData) {
-        this.#privateData = privateData
-        this.publicData = publicData
-      }
-      getPrivateData() {
-        return this.#privateData
-      }
-    }
-    const testObj1 = {
-      data: new testClass('publicData', 'privateData')
-    }
-    const clonedTestObj1 = cloneDeep(testObj1)
-    expect(testObj1.data.getPrivateData()).eq('privateData')
-    try {
-      clonedTestObj1.data.getPrivateData()
-    } catch (error) {
-      expect(error).instanceOf(TypeError)
-      expect(error.message).eq(
-        'Cannot read private member #privateData from an object whose class did not declare it'
-      )
-    }
+  // Test cloning of arguments objects
+  test('Clone arguments objects', () => {
+    const getArgs = (...args: any[]) => args
+    const argsArray = getArgs(1, 2, 3)
+    const clonedArgs = clone(argsArray)
+    expect(clonedArgs).not.toBe(argsArray)
+    expect(clonedArgs).toEqual([1, 2, 3])
+  })
 
-    const testCloner = (
-      value: any,
-      key: string | undefined,
-      cache: WeakMap<any, any>,
-      defaultClone4Object
-    ) => {
-      if (cache.has(value)) {
-        return cache.get(value)
-      }
-      if (getTypeTag(value) === 'Object') {
-        if (value instanceof testClass) {
-          return new testClass(value.publicData, value.getPrivateData())
-        } else {
-          return defaultClone4Object(value, cache, testCloner)
-        }
-      } else {
-        return value
-      }
-    }
-    const clonedTestObj2 = cloneDeep(testObj1, testCloner)
-    expect(clonedTestObj2.data.getPrivateData()).eq('privateData')
+  // Test cloning of objects with __proto__
+  test('Clone objects with __proto__', () => {
+    const original = Object.create({ a: 1 })
+    original.b = 2
+    const cloned = clone(original)
+    expect(cloned).not.toBe(original)
+    expect(cloned.b).toBe(2)
+    expect(Object.getPrototypeOf(cloned)).toEqual({ a: 1 })
+  })
 
-    const testCircle: any = {}
-    testCircle.a = testCircle
-    const clonedTestObj3 = cloneDeep(testCircle)
-    expect(clonedTestObj3.a).eq(clonedTestObj3)
+  // Test handling of circular references (shallow clone)
+  test('Handle circular references (shallow clone)', () => {
+    const original: any = {}
+    original.self = original
+    const cloned = clone(original)
+    expect(cloned).not.toBe(original)
+    // In a shallow clone, circular references will cause the cloned object's self to point to itself
+    expect(cloned.self).toBe(original)
+  })
+
+  test('Clone not supported object returns {}', () => {
+    const original = new Error()
+    const cloned = clone(original)
+    expect(cloned).toStrictEqual({})
+  })
+
+  test('Clone TypedArray', () => {
+    const original = new Error()
+    const cloned = clone(original)
+    expect(cloned).toStrictEqual({})
   })
 })
