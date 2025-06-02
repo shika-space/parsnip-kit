@@ -13,7 +13,7 @@ describe('randomInt', () => {
   test('should return a number in the specified range', () => {
     const start = 5
     const end = 15
-    
+
     for (let i = 1; i < 100; i++) {
       const result = randomInt(start, end)
       expect(result).toBeGreaterThanOrEqual(start)
