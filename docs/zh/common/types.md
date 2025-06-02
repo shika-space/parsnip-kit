@@ -24,6 +24,21 @@
 [[[source NumberString
   
 ]]]
+
+# PseudoArray
+[[[desc PseudoArray
+伪数组（Pseudo-array），也被称为类数组对象（Array-like Object），即具有数值型 `length` 属性的对象。
+]]]
+
+[[[version PseudoArray
+  
+]]]
+
+### Source
+[[[source PseudoArray
+  
+]]]
+
 # ObjectLike
 [[[desc ObjectLike
 非函数对象。

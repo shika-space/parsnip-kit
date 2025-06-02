@@ -1,3 +1,4 @@
+import { PseudoArray } from '../common/types'
 import { isObject } from './isObject'
 
 /**
@@ -6,6 +7,6 @@ import { isObject } from './isObject'
  * @returns {boolean}
  * @version 0.0.1
  */
-export function isPseudoArray(arg): arg is Function {
+export function isPseudoArray(arg): arg is PseudoArray {
   return isObject(arg) && 'length' in arg && typeof arg.length === 'number'
 }

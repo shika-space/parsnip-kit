@@ -24,6 +24,20 @@
 [[[source NumberString
   
 ]]]
+
+# PseudoArray
+[[[desc PseudoArray
+]]]
+
+[[[version PseudoArray
+  
+]]]
+
+### Source
+[[[source PseudoArray
+  
+]]]
+
 # ObjectLike
 [[[desc ObjectLike
 

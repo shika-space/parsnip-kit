@@ -24,6 +24,21 @@
 [[[source NumberString
   
 ]]]
+
+# PseudoArray
+[[[desc PseudoArray
+疑似配列（Pseudo-array）とは、数値型の `length` プロパティを持つオブジェクトであり、配列のようなオブジェクト（Array-like Object）とも呼ばれます。
+]]]
+
+[[[version PseudoArray
+  
+]]]
+
+### Source
+[[[source PseudoArray
+  
+]]]
+
 # ObjectLike
 [[[desc ObjectLike
 

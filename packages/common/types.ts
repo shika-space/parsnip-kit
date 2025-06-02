@@ -23,6 +23,12 @@ export type PrimitiveType =
 export type NumberString = `${number}`
 
 /**
+ * A pseudo-array, also known as an array-like object, an object had a numeric `length` property.
+ * @version 0.0.3
+ */
+export type PseudoArray = object & { length: number }
+
+/**
  * Non-function object.
  * @version 0.0.1
  */
