@@ -14,7 +14,7 @@
     "docs:preview": "npm run doc && vitepress preview wiki",
     "release": "npm run test && npm run lint:fix && npm run build && npm publish",
     "init": "node script/init.js",
-    "prepare": "husky",
+    "prepare": "husky install",
     "lint:lint-staged": "lint-staged"
   },
   "devDependencies": {
@@ -25,7 +25,7 @@
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.3",
     "esprima": "^4.0.1",
-    "husky": "^8.0.0",
+    "husky": "^9.1.7",
     "inquirer": "^12.5.0",
     "lint-staged": "^15.5.0",
     "typescript": "~5.7.2",
