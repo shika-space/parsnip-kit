@@ -33,6 +33,7 @@ export default defineConfig({
   vite: {
     plugins: [
       llmsPlugin({
+        generateLLMsFullTxt: true,
         ignoreFiles: [
           '**/guide/*.md',
           '**/ja/**/*.md',
