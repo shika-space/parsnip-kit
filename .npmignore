@@ -8,5 +8,8 @@ eslint.config.js
 tsconfig.json
 vite.config.ts
 
+.husky/
+.github/
+
 packages/**/*.test.ts
 packages/**/*.test.js
