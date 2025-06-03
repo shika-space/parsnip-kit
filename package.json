@@ -11,7 +11,7 @@
     "doc:pure": "node script/generateMd.js",
     "docs:dev": "npm run doc && vitepress dev wiki",
     "docs:build": "npm run doc && vitepress build wiki",
-    "docs:preview": "npm run doc && vitepress preview wiki",
+    "docs:preview": "vitepress preview wiki",
     "release": "npm run test && npm run lint:fix && npm run build && npm publish",
     "init": "node script/init.js",
     "prepare": "husky install",
@@ -32,6 +32,7 @@
     "typescript-eslint": "^8.24.0",
     "vite": "^6.1.0",
     "vitepress": "^1.6.3",
+    "vitepress-plugin-llms": "^1.3.4",
     "vitest": "^3.0.5"
   },
   "main": "./dist/parsnip-kit.js",

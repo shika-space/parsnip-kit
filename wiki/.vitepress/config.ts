@@ -1,4 +1,5 @@
 import { defineConfig } from 'vitepress'
+import llmsPlugin from 'vitepress-plugin-llms'
 import zh from './zh'
 import en from './en'
 import ja from './ja'
@@ -9,12 +10,7 @@ export default defineConfig({
       level: [1]
     }
   },
-  head: [
-    [
-      'link',
-      { rel: 'icon', href: '/parsnip-kit/logo.svg' }
-    ]
-  ],
+  head: [['link', { rel: 'icon', href: '/parsnip-kit/logo.svg' }]],
   lastUpdated: true,
   cleanUrls: true,
   metaChunk: true,
@@ -31,7 +27,19 @@ export default defineConfig({
   locales: {
     zh: { label: '中文', ...zh },
     en: { label: 'English', ...en },
-    ja: { label: '日本語', ...ja },
+    ja: { label: '日本語', ...ja }
   },
-  base: '/parsnip-kit/'
+  base: '/parsnip-kit/',
+  vite: {
+    plugins: [
+      llmsPlugin({
+        ignoreFiles: [
+          '**/guide/*.md',
+          '**/ja/**/*.md',
+          '**/zh/**/*.md',
+          '**/index.md'
+        ]
+      })
+    ]
+  }
 })

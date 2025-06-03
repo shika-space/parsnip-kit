@@ -27,6 +27,12 @@ Parsnip Kit can run in the following environments.
 
 If you need to support older browsers, manually add [Babel](https://babeljs.io/) and the corresponding Polyfill.
 
+# LLMs
+
+[llms.txt](/llms.txt)
+
+[llms.full.txt](/llms.full.txt)
+
 # Example Usage
 ```typescript
 import {

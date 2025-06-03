@@ -27,6 +27,12 @@ Parsnip Kit 支持在以下环境运行：
 
 如果您需要支持旧版本的浏览器，请自行添加 [Babel](https://babeljs.io/) 和相应的 Polyfill。
 
+# LLMs
+
+[llms.txt](/llms.txt)
+
+[llms.full.txt](/llms.full.txt)
+
 # 使用示例
 ```typescript
 import {
