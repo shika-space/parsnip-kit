@@ -8,9 +8,7 @@
 
 ### Usage
 
-```ts
-// Usage
-```
+[[[demo]]]
 
 
 ### API

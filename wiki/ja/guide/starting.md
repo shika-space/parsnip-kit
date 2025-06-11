@@ -31,7 +31,7 @@ Parsnip Kit は、以下の環境で実行をサポートしています：
 
 [llms.txt](/llms.txt)
 
-[llms.full.txt](/llms.full.txt)
+[llms-full.txt](/llms-full.txt)
 
 # 使用例
 ```typescript
@@ -62,7 +62,7 @@ const data = [
 const profile = [
   { id: 13, age: 44, nickname: 'coding neko' },
   { id: 18, age: 30, nickname: 'kurisutina' },
-  { id: 35, age: 23, nickname: 'Bob - Software Engineer' }
+  { id: 35, age: 23, nickname: 'Bug Engineer' }
 ]
 
 average(data, 'blog.count') // 62
@@ -94,7 +94,7 @@ leftJoin(data, profile, 'id', 'id', (a, b) => ({...a, ...b}))
 //   },
 //   {
 //     id: 35, name: 'Carlin', email: 'carlin@example.test',
-//     age: 23, nickname: 'Bob - Software Engineer',
+//     age: 23, nickname: 'Bug Engineer',
 //     blog: { count: 116, fans: 56563 }
 //   }
 // ]
